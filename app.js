@@ -1017,8 +1017,6 @@ function toggleTopic(subject, classLevel, chapterName, topicName) {
     
   saveProgress();
     
-    // Re-render to update progress bars
-    renderSubjectContent(appState.currentSubject);
 }
 
 // Update chapter status based on topic completion
