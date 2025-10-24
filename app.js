@@ -1013,18 +1013,16 @@ function toggleTopic(subject, classLevel, chapterName, topicName) {
     // 1. Update the application state (the actual toggle)
     appState.progress[appState.currentYear][subject][classLevel][chapterName].topics[topicName] = !currentState;
 
-    // 2. Update chapter status based on topic completion
+    // 2. Update chapter status (This likely handles intermediate chapter status)
     updateChapterStatusFromTopics(subject, classLevel, chapterName);
     
-    // 3. ✨ CRITICAL: Update the overall display
+    // 3. ✨ CRITICAL: CALL THE PROGRESS BAR UPDATE FUNCTION!
+    //    This function calculates the new percentage and updates the bar's width.
     updateProgressDisplay(); 
     
     // 4. Save the change to persistent storage
     saveProgress(); 
-    
-    // NO re-renderSubjectContent() call here!
 }
-
 // Update chapter status based on topic completion
 function updateChapterStatusFromTopics(subject, classLevel, chapterName) {
     const chapterProgress = appState.progress[appState.currentYear][subject][classLevel][chapterName];
