@@ -1291,40 +1291,36 @@ function resetAllProgress() {
     }
 }
 
-// Event listeners
-document.addEventListener('DOMContentLoaded', function() {
-    // Try to load saved progress first, then initialize if none found
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() { 
+
+    // 1. CRITICAL: Try to load saved progress first.
+    //    This must happen before rendering!
     if (!loadSavedProgress()) {
-        initializeProgress();
+        initializeProgress(); 
     }
-    
-    // Show persistence notification
-    setTimeout(() => {
-        console.log('🚨 PERSISTENCE NOTE: In a real environment, your progress would be saved to localStorage and persist across sessions. Currently, progress is only maintained during this session due to sandboxed environment limitations.');
-    }, 1000);
-    
-    // Set up year selector
+
+    // 2. Set up year selector (Your original logic)
     const yearSelector = document.getElementById('yearSelector');
     yearSelector.addEventListener('change', function() {
         switchYear(this.value);
     });
-    
-    // Set up subject tabs
+
+    // 3. Set up subject tabs (Your original logic)
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', function() {
             switchSubject(this.dataset.subject);
         });
     });
-    
-    // Set up reset button
+
+    // 4. Set up reset button (Your original logic)
     document.getElementById('resetBtn').addEventListener('click', resetAllProgress);
-    
-    // Initial render
+
+    // 5. Initial render (These use the data loaded above)
     renderSubjectContent(appState.currentSubject);
     updateProgressDisplay();
     
-    // Auto-save progress (mock function)
-    mockLocalStorage.setItem('neet-tracker-progress', JSON.stringify(appState.progress));
+    // (There should be no code here now, as the mock save was deleted)
 });
 
 // Make functions available globally for onclick handlers
