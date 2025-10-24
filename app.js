@@ -1095,11 +1095,34 @@ function calculateOverallProgress(year = null) {
 
 // Update progress display
 function updateProgressDisplay() {
-    // Update overall progress
-    const overallProgress = calculateOverallProgress();
+    // 1. Update overall progress (This part is fine, assuming calculation works)
+    const overallProgress = calculateOverallProgress(); // This function must calculate progress across ALL subjects
     document.getElementById('overallProgress').textContent = `${overallProgress}%`;
     document.getElementById('overallProgressBar').style.width = `${overallProgress}%`;
+
+    // 2. Resolve the subject data issue
+    // We assume the syllabus structure is appState.progress[currentYear][subject]
+    const currentYearData = appState.progress[appState.currentYear] || {};
+    const currentSubjectData = currentYearData[appState.currentSubject] || {};
     
+    // We now loop through the keys of the current subject data instead of a global syllabusData
+    Object.keys(currentYearData).forEach(subject => { 
+        
+        // Ensure we are getting the actual data for the progress calculation
+        const subjectProgressData = currentYearData[subject];
+
+        // Ensure you pass the correct data to your calculation function
+        const progress = calculateSubjectProgress(subject, subjectProgressData); 
+        
+        const element = document.getElementById(`${subject}Progress`);
+        const bar = document.getElementById(`${subject}ProgressBar`);
+
+        if (element && bar) {
+            element.textContent = `${progress}%`;
+            bar.style.width = `${progress}%`;
+        }
+    });
+}
     // Update subject progress
     Object.keys(syllabusData).forEach(subject => {
         const progress = calculateSubjectProgress(subject);
