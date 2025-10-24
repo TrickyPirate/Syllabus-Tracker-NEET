@@ -1009,14 +1009,20 @@ function toggleChapter(chapterKey) {
 // Toggle topic completion
 function toggleTopic(subject, classLevel, chapterName, topicName) {
     const currentState = appState.progress[appState.currentYear][subject][classLevel][chapterName].topics[topicName];
+    
+    // 1. Update the application state (the actual toggle)
     appState.progress[appState.currentYear][subject][classLevel][chapterName].topics[topicName] = !currentState;
-    
-    // Update chapter status based on topic completion
+
+    // 2. Update chapter status based on topic completion
     updateChapterStatusFromTopics(subject, classLevel, chapterName);
-    updateProgressDisplay();
     
-  saveProgress();
+    // 3. ✨ CRITICAL: Update the overall display
+    updateProgressDisplay(); 
     
+    // 4. Save the change to persistent storage
+    saveProgress(); 
+    
+    // NO re-renderSubjectContent() call here!
 }
 
 // Update chapter status based on topic completion
