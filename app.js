@@ -896,48 +896,75 @@ const syllabusData = {
     }
 };
 
-// Mock localStorage functionality with user notification
-const mockLocalStorage = {
-    setItem: function(key, value) {
-        // In a real environment, this would save to browser storage
-        console.log(`💾 Progress saved: ${key} (Note: Data persists only during current session)`);
-    },
-    getItem: function(key) {
-        // In a real environment, this would load from browser storage
-        return null;
-    },
-    removeItem: function(key) {
-        // In a real environment, this would remove from browser storage
-        console.log(`🗑️ Progress cleared: ${key}`);
-    }
-};
+// ======================================================================
+// 1. APPLICATION STATE (WITH DEFAULTS)
+// ======================================================================
 
-// Application state - stored in memory (would be persistent with localStorage)
+// The default state structure. loadSavedProgress will try to overwrite 
+// the 'progress' part with saved data.
 let appState = {
     currentYear: '2026',
     currentSubject: 'physics',
-    expandedChapters: {}, // Track which chapters are expanded
+    expandedChapters: {}, 
     progress: {
+        // Initialize with default years/subjects if needed, 
+        // or let the loading/saving process create them as you go.
         '2026': {},
         '2027': {}
     }
 };
 
-// Load saved progress (mock function)
+
+// ======================================================================
+// 2. SAVE AND LOAD FUNCTIONS
+// ======================================================================
+
+/**
+ * Saves the current appState.progress to the browser's localStorage.
+ */
+function saveProgress() {
+    try {
+        // Convert the 'progress' data (which contains all completion info) to a JSON string
+        const progressJSON = JSON.stringify(appState.progress);
+        
+        // Store the string using a unique key
+        localStorage.setItem('neet-tracker-progress', progressJSON);
+        
+        console.log('✅ Progress saved successfully to persistent storage!');
+    } catch (error) {
+        // This handles security errors (e.g., storage denied) or storage full errors
+        console.error('❌ Could not save progress to localStorage:', error);
+    }
+}
+
+/**
+ * Loads saved progress from localStorage and updates the appState.
+ */
 function loadSavedProgress() {
     try {
-        const savedData = mockLocalStorage.getItem('neet-tracker-progress');
+        const savedData = localStorage.getItem('neet-tracker-progress');
+        
         if (savedData) {
             const parsed = JSON.parse(savedData);
+            
+            // Overwrite the default progress with the saved data
             appState.progress = parsed;
-            console.log('📚 Progress loaded successfully!');
+            
+            console.log('📚 Progress loaded successfully from previous session!');
+            
+            // CRITICAL: After loading, call the function that visually updates your UI 
+            // to reflect the checked items and progress bar widths.
+            // You will need to make sure this function exists in your code:
+            // updateTrackerUI(); 
+            
             return true;
         }
     } catch (error) {
-        console.log('⚠️ No saved progress found, starting fresh');
+        console.warn('⚠️ No saved progress found or error parsing data, starting fresh.', error);
     }
     return false;
 }
+
 
 // Initialize progress for both years
 function initializeProgress() {
@@ -988,11 +1015,7 @@ function toggleTopic(subject, classLevel, chapterName, topicName) {
     updateChapterStatusFromTopics(subject, classLevel, chapterName);
     updateProgressDisplay();
     
-    // Auto-save progress (mock function)
-    mockLocalStorage.setItem('neet-tracker-progress', JSON.stringify(appState.progress));
-    
-    // Auto-save progress (mock function)
-    mockLocalStorage.setItem('neet-tracker-progress', JSON.stringify(appState.progress));
+  saveProgress();
     
     // Re-render to update progress bars
     renderSubjectContent(appState.currentSubject);
