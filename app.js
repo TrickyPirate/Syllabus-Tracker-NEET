@@ -1009,20 +1009,18 @@ function toggleChapter(chapterKey) {
 // Toggle topic completion
 function toggleTopic(subject, classLevel, chapterName, topicName) {
     const currentState = appState.progress[appState.currentYear][subject][classLevel][chapterName].topics[topicName];
-    
-    // 1. Update the application state (the actual toggle)
     appState.progress[appState.currentYear][subject][classLevel][chapterName].topics[topicName] = !currentState;
-
-    // 2. Update chapter status (This likely handles intermediate chapter status)
+    
+    // Update chapter status based on topic completion
     updateChapterStatusFromTopics(subject, classLevel, chapterName);
+    updateProgressDisplay();
     
-    // 3. ✨ CRITICAL: CALL THE PROGRESS BAR UPDATE FUNCTION!
-    //    This function calculates the new percentage and updates the bar's width.
-    updateProgressDisplay(); 
+  saveProgress();
     
-    // 4. Save the change to persistent storage
-    saveProgress(); 
+    // Re-render to update progress bars
+    renderSubjectContent(appState.currentSubject);
 }
+
 // Update chapter status based on topic completion
 function updateChapterStatusFromTopics(subject, classLevel, chapterName) {
     const chapterProgress = appState.progress[appState.currentYear][subject][classLevel][chapterName];
@@ -1095,34 +1093,11 @@ function calculateOverallProgress(year = null) {
 
 // Update progress display
 function updateProgressDisplay() {
-    // 1. Update overall progress (This part is fine, assuming calculation works)
-    const overallProgress = calculateOverallProgress(); // This function must calculate progress across ALL subjects
+    // Update overall progress
+    const overallProgress = calculateOverallProgress();
     document.getElementById('overallProgress').textContent = `${overallProgress}%`;
     document.getElementById('overallProgressBar').style.width = `${overallProgress}%`;
-
-    // 2. Resolve the subject data issue
-    // We assume the syllabus structure is appState.progress[currentYear][subject]
-    const currentYearData = appState.progress[appState.currentYear] || {};
-    const currentSubjectData = currentYearData[appState.currentSubject] || {};
     
-    // We now loop through the keys of the current subject data instead of a global syllabusData
-    Object.keys(currentYearData).forEach(subject => { 
-        
-        // Ensure we are getting the actual data for the progress calculation
-        const subjectProgressData = currentYearData[subject];
-
-        // Ensure you pass the correct data to your calculation function
-        const progress = calculateSubjectProgress(subject, subjectProgressData); 
-        
-        const element = document.getElementById(`${subject}Progress`);
-        const bar = document.getElementById(`${subject}ProgressBar`);
-
-        if (element && bar) {
-            element.textContent = `${progress}%`;
-            bar.style.width = `${progress}%`;
-        }
-    });
-}
     // Update subject progress
     Object.keys(syllabusData).forEach(subject => {
         const progress = calculateSubjectProgress(subject);
