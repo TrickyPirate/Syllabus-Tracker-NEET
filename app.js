@@ -1169,10 +1169,7 @@ function renderSubjectContent(subject) {
                                 onclick="event.stopPropagation(); updateChapterStatus('${subject}', '${classLevel}', '${chapterName}', 'completed')">
                             Completed
                         </button>
-                        <button class="status-btn revised ${currentStatus === 'revised' ? 'active' : ''}" 
-                                onclick="event.stopPropagation(); updateChapterStatus('${subject}', '${classLevel}', '${chapterName}', 'revised')">
-                            Revised
-                        </button>
+                        
                     </div>
                     
                     <div class="chapter-content ${isExpanded ? 'show' : ''}">
